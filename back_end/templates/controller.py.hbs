@@ -1,0 +1,13 @@
+from flask import request, jsonify
+from .models import {{ entity_name }}, db
+
+def {{ action_name }}():
+    data = request.get_json()
+    new_{{ entity_var }} = {{ entity_name }}(
+        {% for prop in properties.keys() %}
+        {{ prop }}=data['{{ prop }}'],
+        {% endfor %}
+    )
+    db.session.add(new_{{ entity_var }})
+    db.session.commit()
+    return jsonify({'message': '{{ entity_name }} adicionado com sucesso!'}), 201

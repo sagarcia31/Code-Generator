@@ -1,0 +1,25 @@
+import React, { useState } from 'react';
+import { delete{{ entity_name }} } from '../services/{{ entity_name.lower() }}Service';
+
+function Delete{{ entity_name }}({ match }) {
+    const [message, setMessage] = useState('');
+
+    const handleDelete = async () => {
+        try {
+            const response = await delete{{ entity_name }}(match.params.id);
+            setMessage(response.message);
+        } catch (error) {
+            setMessage('Erro ao deletar {{ entity_name }}');
+        }
+    };
+
+    return (
+        <div>
+            <h2>Deletar {{ entity_name }}</h2>
+            <button onClick={handleDelete}>Deletar</button>
+            {message && <p>{message}</p>}
+        </div>
+    );
+}
+
+export default Delete{{ entity_name }};

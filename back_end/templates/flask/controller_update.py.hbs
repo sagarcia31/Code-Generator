@@ -1,0 +1,16 @@
+from flask import request, jsonify
+from .models import {{ entity_name }}, db
+
+def update_{{ entity_var }}(id):
+    data = request.get_json()
+    {{ entity_var }} = {{ entity_name }}.query.get_or_404(id)
+
+    try:
+        {% for prop in properties.keys() %}
+        {{ entity_var }}.{{ prop }} = data.get('{{ prop }}', {{ entity_var }}.{{ prop }})
+        {% endfor %}
+        db.session.commit()
+        return jsonify({'message': '{{ entity_name }} atualizado com sucesso!', 'data': {{ entity_var }}.to_dict()}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500

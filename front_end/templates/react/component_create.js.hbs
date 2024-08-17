@@ -1,0 +1,49 @@
+import React, { useState } from 'react';
+import { create{{ entity_name }} } from '../services/{{ entity_name.lower() }}Service';
+
+function Add{{ entity_name }}() {
+    const [formData, setFormData] = useState({
+        {% for prop in properties.keys() %}
+        {{ prop }}: '',
+        {% endfor %}
+    });
+    const [message, setMessage] = useState('');
+
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await create{{ entity_name }}(formData);
+            setMessage(response.message);
+        } catch (error) {
+            setMessage('Erro ao adicionar {{ entity_name }}');
+        }
+    };
+
+    return (
+        <div>
+            <h2>Adicionar {{ entity_name }}</h2>
+            <form onSubmit={handleSubmit}>
+                {% for prop in properties.keys() %}
+                <label>{ { prop.capitalize() } }:</label>
+                <input
+                    type="text"
+                    name="{{ prop }}"
+                    value={formData.{{ prop }}}
+                    onChange={handleChange}
+                />
+                {% endfor %}
+                <button type="submit">Adicionar</button>
+            </form>
+            {message && <p>{message}</p>}
+        </div>
+    );
+}
+
+export default Add{{ entity_name }};

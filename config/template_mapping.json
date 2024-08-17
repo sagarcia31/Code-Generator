@@ -1,0 +1,37 @@
+{
+  "backend": {
+    "flask": {
+      "model":  "back_end/templates/flask/model.py.hbs",  
+      "routes": "back_end/templates/flask/routes.py.hbs",
+      "create": "back_end/templates/flask/controller_create.py.hbs",
+      "update": "back_end/templates/flask/controller_update.py.hbs",
+      "delete": "back_end/templates/flask/controller_delete.py.hbs",
+      "list":   "back_end/templates/flask/controller_list.py.hbs"
+    },
+    "django": {
+      "model":  "back_end/templates/django/model.py.hbs", 
+      "routes": "back_end/templates/django/urls.py.hbs", 
+      "update": "back_end/templates/django/views_update.py.hbs",
+      "delete": "back_end/templates/django/views_delete.py.hbs",
+      "list":   "back_end/templates/django/views_list.py.hbs"
+    }
+  },
+  "frontend": {
+    "react": {
+      "routes": "front_end/templates/react/routes.js.hbs",
+      "service": "front_end/templates/react/service.js.hbs",
+      "create": "front_end/templates/react/component_create.js.hbs",
+      "update": "front_end/templates/react/component_update.js.hbs",
+      "delete": "front_end/templates/react/component_delete.js.hbs",
+      "list":   "front_end/templates/react/component_list.js.hbs"
+    },
+    "angular": {
+      "routes":  "front_end/templates/angular/routes.ts.hbs",
+      "service": "front_end/templates/angular/service.ts.hbs",
+      "list":    "front_end/templates/angular/component_list.ts.hbs",
+      "delete":  "front_end/templates/angular/component_delete.ts.hbs",
+      "create":  "front_end/templates/angular/component_create.ts.hbs",
+      "update":  "front_end/templates/angular/component_update.ts.hbs"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+import { Component, OnInit } from '@angular/core';
+import { {{ entity_name }}Service } from '../../services/{{ entity_name.lower() }}.service';
+
+@Component({
+  selector: 'app-list-{{ entity_name.lower() }}',
+  templateUrl: './list-{{ entity_name.lower() }}.component.html',
+})
+export class List{{ entity_name }}Component implements OnInit {
+  items: any[] = [];
+
+  constructor(private {{ entity_name.lower() }}Service: {{ entity_name }}Service) {}
+
+  ngOnInit(): void {
+    this.{{ entity_name.lower() }}Service.list().subscribe(
+      (data) => {
+        this.items = data;
+      },
+      (error) => {
+        console.error('Erro ao listar {{ entity_name }}:', error);
+      }
+    );
+  }
+}

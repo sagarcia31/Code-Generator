@@ -1,19 +1,20 @@
 from jinja2 import Environment, FileSystemLoader
 import os
 
-template_dir = os.path.join(os.path.dirname(__file__), 'templates')
+def generate_code(template_path, **context):
+    template_dir = os.path.dirname(template_path)
+    template_name = os.path.basename(template_path)
 
-def generate_component(entity_name):
     template_env = Environment(loader=FileSystemLoader(searchpath=template_dir))
-    template = template_env.get_template('component.js.hbs')
-    return template.render(entity_name=entity_name)
+    template = template_env.get_template(template_name)
 
-def generate_service(entity_name):
-    template_env = Environment(loader=FileSystemLoader(searchpath=template_dir))
-    template = template_env.get_template('service.js.hbs')
-    return template.render(entity_name=entity_name)
+    return template.render(context)
 
-def generate_routes(entity_name):
-    template_env = Environment(loader=FileSystemLoader(searchpath=template_dir))
-    template = template_env.get_template('routes.js.hbs')
-    return template.render(entity_name=entity_name)
+def generate_component(template_path, entity_name, properties):
+    return generate_code(template_path, entity_name=entity_name, properties=properties)
+
+def generate_service(template_path, entity_name, properties):
+    return generate_code(template_path, entity_name=entity_name, properties=properties)
+
+def generate_routes(template_path, entity_name):
+    return generate_code(template_path, entity_name=entity_name)

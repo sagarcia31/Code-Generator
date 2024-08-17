@@ -1,6 +1,0 @@
-from flask import Blueprint
-from .controllers import {{ action_name }}
-
-{{ entity_name.lower() }}_bp = Blueprint('{{ entity_name.lower() }}', __name__)
-
-{{ entity_name.lower() }}_bp.route('/{{ entity_name.lower() }}', methods=['POST'])( {{ action_name }} )

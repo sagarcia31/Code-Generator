@@ -1,0 +1,7 @@
+from flask import jsonify
+from .models import {{ entity_name }}
+
+def list_{{ entity_var }}():
+    all_{{ entity_var }}s = {{ entity_name }}.query.all()
+    result = [{{ entity_var }}.to_dict() for {{ entity_var }} in all_{{ entity_var }}s]
+    return jsonify(result), 200

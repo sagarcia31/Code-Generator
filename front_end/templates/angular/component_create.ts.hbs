@@ -1,0 +1,29 @@
+import { Component } from '@angular/core';
+import { {{ entity_name }}Service } from '../../services/{{ entity_name.lower() }}.service';
+
+@Component({
+  selector: 'app-add-{{ entity_name.lower() }}',
+  templateUrl: './add-{{ entity_name.lower() }}.component.html',
+})
+export class Add{{ entity_name }}Component {
+  formData = {
+    {% for prop in properties.keys() %}
+    {{ prop }}: '',
+    {% endfor %}
+  };
+  message = '';
+
+  constructor(private {{ entity_name.lower() }}Service: {{ entity_name }}Service) {}
+
+  onSubmit(): void {
+    this.{{ entity_name.lower() }}Service.create(this.formData).subscribe(
+      (response) => {
+        this.message = '{{ entity_name }} adicionado com sucesso!';
+      },
+      (error) => {
+        console.error('Erro ao adicionar {{ entity_name }}:', error);
+        this.message = 'Erro ao adicionar {{ entity_name }}';
+      }
+    );
+  }
+}

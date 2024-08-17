@@ -1,0 +1,29 @@
+import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { {{ entity_name }}Service } from '../../services/{{ entity_name.lower() }}.service';
+
+@Component({
+  selector: 'app-delete-{{ entity_name.lower() }}',
+  templateUrl: './delete-{{ entity_name.lower() }}.component.html',
+})
+export class Delete{{ entity_name }}Component {
+  message = '';
+
+  constructor(
+    private route: ActivatedRoute,
+    private {{ entity_name.lower() }}Service: {{ entity_name }}Service
+  ) {}
+
+  delete{{ entity_name }}(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    this.{{ entity_name.lower() }}Service.delete(Number(id)).subscribe(
+      (response) => {
+        this.message = '{{ entity_name }} deletado com sucesso!';
+      },
+      (error) => {
+        console.error('Erro ao deletar {{ entity_name }}:', error);
+        this.message = 'Erro ao deletar {{ entity_name }}';
+      }
+    );
+  }
+}

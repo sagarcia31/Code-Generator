@@ -1,0 +1,29 @@
+import React, { useState, useEffect } from 'react';
+import { list{{ entity_name }} } from '../services/{{ entity_name.lower() }}Service';
+
+function List{{ entity_name }}() {
+    const [items, setItems] = useState([]);
+
+    useEffect(() => {
+        const fetchItems = async () => {
+            const response = await list{{ entity_name }}();
+            setItems(response);
+        };
+        fetchItems();
+    }, []);
+
+    return (
+        <div>
+            <h2>Lista de {{ entity_name }}s</h2>
+            <ul>
+                {items.map(item => (
+                    <li key={item.id}>
+                        { { item.id }} - { { item.name }} {/* Assumindo que existe um campo "name" */}
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+}
+
+export default List{{ entity_name }};

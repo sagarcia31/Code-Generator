@@ -1,0 +1,18 @@
+from flask import request, jsonify
+from .models import {{ entity_name }}, db
+
+def create_{{ entity_var }}():
+    data = request.get_json()
+
+    try:
+        new_{{ entity_var }} = {{ entity_name }}(
+            {% for prop in properties.keys() %}
+            {{ prop }}=data.get('{{ prop }}'),
+            {% endfor %}
+        )
+        db.session.add(new_{{ entity_var }})
+        db.session.commit()
+        return jsonify({'message': '{{ entity_name }} adicionado com sucesso!', 'data': new_{{ entity_var }}.to_dict()}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500

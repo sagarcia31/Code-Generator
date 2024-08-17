@@ -1,0 +1,50 @@
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { {{ entity_name }}Service } from '../../services/{{ entity_name.lower() }}.service';
+
+@Component({
+  selector: 'app-update-{{ entity_name.lower() }}',
+  templateUrl: './update-{{ entity_name.lower() }}.component.html',
+})
+export class Update{{ entity_name }}Component implements OnInit {
+  formData = {
+    {% for prop in properties.keys() %}
+    {{ prop }}: '',
+    {% endfor %}
+  };
+  message = '';
+
+  constructor(
+    private route: ActivatedRoute,
+    private {{ entity_name.lower() }}Service: {{ entity_name }}Service
+  ) {}
+
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    this.{{ entity_name.lower() }}Service.list().subscribe(
+      (data) => {
+        // Suponha que `data` contenha uma lista de itens e precisamos encontrar o item com o ID correto
+        const item = data.find((item) => item.id === Number(id));
+        if (item) {
+          this.formData = item;
+        }
+      },
+      (error) => {
+        console.error('Erro ao carregar {{ entity_name }}:', error);
+      }
+    );
+  }
+
+  onSubmit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    this.{{ entity_name.lower() }}Service.update(Number(id), this.formData).subscribe(
+      (response) => {
+        this.message = '{{ entity_name }} atualizado com sucesso!';
+      },
+      (error) => {
+        console.error('Erro ao atualizar {{ entity_name }}:', error);
+        this.message = 'Erro ao atualizar {{ entity_name }}';
+      }
+    );
+  }
+}

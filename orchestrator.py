@@ -1,23 +1,25 @@
 import os
+from back_end.generator import generate_model, generate_controller, generate_routes
+from front_end.generator import generate_component, generate_service, generate_routes as generate_fe_routes
+from process_story import process_user_story
+from process_bdd import process_bdd
 
 def orchestrate_generation(user_story, bdd_scenario):
-    from back_end.generator import generate_model, generate_controller, generate_routes
-    from front_end.generator import generate_component, generate_service, generate_routes as generate_fe_routes
+    # Processa a história de usuário
+    story_data = process_user_story(user_story)
+    
+    # Processa o cenário BDD
+    bdd_data = process_bdd(bdd_scenario)
 
-    entity_name = "Produto"  
-    action_name = "add_produto"
-    entity_var = entity_name.lower()
-
-    # Propriedades inferidas (você pode ajustar isso conforme necessário)
-    properties = {
-        'name': 'String(255)',
-        'price': 'Float',
-        'quantity': 'Integer'
-    }
+    # Extração das informações processadas
+    entity_name = story_data['model_name']
+    action_name = story_data['action_name']
+    entity_var = story_data['model_instance']
+    properties = bdd_data['properties']
 
     # Geração do back-end
     model_code = generate_model(entity_name, properties)
-    controller_code = generate_controller(action_name, entity_name, entity_var, properties)
+    controller_code = generate_controller(action_name, entity_name, entity_var, properties, bdd_data)
     back_end_routes = generate_routes(entity_name)
 
     # Criar diretórios se não existirem
@@ -55,16 +57,10 @@ def orchestrate_generation(user_story, bdd_scenario):
 if __name__ == "__main__":
     user_story = "Como um usuário, eu quero adicionar um produto para que eu possa gerenciar meu inventário."
     bdd_scenario = """
-    Feature: Gerenciamento de Produtos
-
-    Scenario: Adicionar um novo produto ao inventário
         Given que o produto tem um nome, preço e quantidade definidos
         When o usuário adiciona o produto ao inventário
         Then o produto deve ser salvo no sistema
         And o sistema deve exibir uma mensagem de sucesso
     """
     
-    # Exemplo fictício de integração com o Figma (Descomente se usar a integração com Figma)
-    # figma_designs = extract_design_from_figma(figma_file_key="your_file_key", figma_access_token="your_access_token")
-
     orchestrate_generation(user_story, bdd_scenario)

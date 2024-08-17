@@ -8,10 +8,18 @@ def generate_model(entity_name, properties):
     template = template_env.get_template('model.py.hbs')
     return template.render(entity_name=entity_name, properties=properties)
 
-def generate_controller(action_name, entity_name, entity_var, properties):
+def generate_controller(action_name, entity_name, entity_var, properties, bdd_data):
     template_env = Environment(loader=FileSystemLoader(searchpath=template_dir))
     template = template_env.get_template('controller.py.hbs')
-    return template.render(action_name=action_name, entity_name=entity_name, entity_var=entity_var, properties=properties)
+    return template.render(
+        action_name=action_name, 
+        entity_name=entity_name, 
+        entity_var=entity_var, 
+        properties=properties,
+        bdd_conditions=bdd_data['conditions'],
+        bdd_action=bdd_data['action'],
+        bdd_expected_result=bdd_data['expected_result']
+    )
 
 def generate_routes(entity_name):
     template_env = Environment(loader=FileSystemLoader(searchpath=template_dir))

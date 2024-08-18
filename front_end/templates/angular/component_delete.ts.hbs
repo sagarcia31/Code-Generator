@@ -14,9 +14,9 @@ export class Delete{{ entity_name }}Component {
     private {{ entity_name.lower() }}Service: {{ entity_name }}Service
   ) {}
 
-  delete{{ entity_name }}(): void {
+  onDelete(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    this.{{ entity_name.lower() }}Service.delete(Number(id)).subscribe(
+    this.{{ entity_name.lower() }}Service.delete(parseInt(id, 10)).subscribe(
       (response) => {
         this.message = '{{ entity_name }} deletado com sucesso!';
       },

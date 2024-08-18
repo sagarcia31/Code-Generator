@@ -53,7 +53,7 @@ def orchestrate_generation(user_story, bdd_scenario, tech_stack):
         f.write(back_end_routes)
 
     # Geração do front-end
-    component_code = generate_component(component_template, entity_name, properties)
+    component_code = generate_component(component_template, entity_name, properties, bdd_data)
     service_code = generate_service(frontend_templates['service'], entity_name, properties)
     front_end_routes = generate_fe_routes(frontend_routes_template, entity_name)
 
@@ -62,7 +62,7 @@ def orchestrate_generation(user_story, bdd_scenario, tech_stack):
     os.makedirs('front_end/src/services', exist_ok=True)
 
     # Escrever os arquivos gerados para o front-end
-    with open(f'front_end/src/components/Add{entity_name}.js', 'w') as f:
+    with open(f'front_end/src/components/List{entity_name}.js', 'w') as f:
         f.write(component_code)
     with open(f'front_end/src/services/{entity_name.lower()}.js', 'w') as f:
         f.write(service_code)
@@ -72,12 +72,19 @@ def orchestrate_generation(user_story, bdd_scenario, tech_stack):
     print(f"Código gerado com sucesso para a entidade {entity_name}!")
 
 if __name__ == "__main__":
-    user_story = "Como um usuário, eu quero adicionar um produto para que eu possa gerenciar meu inventário."
+    user_story = "Como um usuário, eu quero visualizar uma lista de produtos para que eu possa escolher um produto"
     bdd_scenario = """
+    Scenario: Exibir lista de produtos
         Given que o produto tem um nome, preço e quantidade definidos
-        When o usuário adiciona o produto ao inventário
-        Then o produto deve ser salvo no sistema
-        And o sistema deve exibir uma mensagem de sucesso
+        When o usuário entra na pagina pela primeira vez
+        Then a lista com os produtos deve ser exibida
+        And a lista de produtos deve exibir no máximo 100 itens por página
+
+    Scenario: Carregando a lista de produtos
+        Given que estou carregando a lista de produtos
+        When a lista ainda não foi carregada
+        Then uma tela com um loading circular aparece
+        And após a lista ser carregada o loading desaparece
     """
     
     tech_stack = {

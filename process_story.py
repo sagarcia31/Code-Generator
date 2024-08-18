@@ -25,7 +25,7 @@ def process_user_story(user_story):
         method = "update"
     elif "remover" in user_story.lower() or "deletar" in user_story.lower():
         method = "delete"
-    elif "listar" in user_story.lower():
+    elif "listar" in user_story.lower() or "visualizar" in user_story.lower():
         method = "list"
 
     # Se a entidade do modelo não foi identificada corretamente, defina um padrão

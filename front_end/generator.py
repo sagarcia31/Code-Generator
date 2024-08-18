@@ -10,8 +10,15 @@ def generate_code(template_path, **context):
 
     return template.render(context)
 
-def generate_component(template_path, entity_name, properties):
-    return generate_code(template_path, entity_name=entity_name, properties=properties)
+def generate_component(template_path, entity_name, properties, bdd_data):
+    return generate_code(
+        template_path, 
+        entity_name=entity_name, 
+        properties=properties,
+        bdd_conditions=bdd_data['conditions'],
+        bdd_action=bdd_data['action'],
+        bdd_expected_result=bdd_data['expected_result']
+    )
 
 def generate_service(template_path, entity_name, properties):
     return generate_code(template_path, entity_name=entity_name, properties=properties)

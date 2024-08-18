@@ -21,23 +21,17 @@ export class Update{{ entity_name }}Component implements OnInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    this.{{ entity_name.lower() }}Service.list().subscribe(
-      (data) => {
-        // Suponha que `data` contenha uma lista de itens e precisamos encontrar o item com o ID correto
-        const item = data.find((item) => item.id === Number(id));
-        if (item) {
-          this.formData = item;
-        }
-      },
-      (error) => {
-        console.error('Erro ao carregar {{ entity_name }}:', error);
+    this.{{ entity_name.lower() }}Service.list().subscribe((data) => {
+      const item = data.find((item) => item.id === parseInt(id, 10));
+      if (item) {
+        this.formData = item;
       }
-    );
+    });
   }
 
   onSubmit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    this.{{ entity_name.lower() }}Service.update(Number(id), this.formData).subscribe(
+    this.{{ entity_name.lower() }}Service.update(parseInt(id, 10), this.formData).subscribe(
       (response) => {
         this.message = '{{ entity_name }} atualizado com sucesso!';
       },

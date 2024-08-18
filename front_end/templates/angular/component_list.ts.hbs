@@ -7,16 +7,21 @@ import { {{ entity_name }}Service } from '../../services/{{ entity_name.lower() 
 })
 export class List{{ entity_name }}Component implements OnInit {
   items: any[] = [];
+  loading = true;
+  error = '';
 
   constructor(private {{ entity_name.lower() }}Service: {{ entity_name }}Service) {}
 
   ngOnInit(): void {
     this.{{ entity_name.lower() }}Service.list().subscribe(
       (data) => {
-        this.items = data;
+        this.items = data.slice(0, 100);  // Aplicando a paginação conforme o BDD
+        this.loading = false;
       },
       (error) => {
-        console.error('Erro ao listar {{ entity_name }}:', error);
+        console.error('Erro ao carregar {{ entity_name }}s:', error);
+        this.error = 'Erro ao carregar {{ entity_name }}s';
+        this.loading = false;
       }
     );
   }

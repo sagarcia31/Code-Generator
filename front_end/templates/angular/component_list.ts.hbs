@@ -3,7 +3,21 @@ import { {{ entity_name }}Service } from '../../services/{{ entity_name.lower() 
 
 @Component({
   selector: 'app-list-{{ entity_name.lower() }}',
-  templateUrl: './list-{{ entity_name.lower() }}.component.html',
+  template: `
+    {% if figma_components %}
+        {% for component_name, component_html in figma_components.items() %}
+        {{ component_html | safe }}
+        {% endfor %}
+    {% else %}
+        <div class="list-container">
+            <!-- Componente padrão de listagem -->
+            <h2>Lista de {{ entity_name }}</h2>
+            <ul>
+                <li *ngFor="let item of items">{{ item.name }}</li>
+            </ul>
+        </div>
+    {% endif %}
+  `,
 })
 export class List{{ entity_name }}Component implements OnInit {
   items: any[] = [];
@@ -15,7 +29,7 @@ export class List{{ entity_name }}Component implements OnInit {
   ngOnInit(): void {
     this.{{ entity_name.lower() }}Service.list().subscribe(
       (data) => {
-        this.items = data.slice(0, 100);  // Aplicando a paginação conforme o BDD
+        this.items = data;
         this.loading = false;
       },
       (error) => {

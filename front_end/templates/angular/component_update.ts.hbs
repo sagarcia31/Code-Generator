@@ -1,44 +1,57 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { {{ entity_name }}Service } from '../../services/{{ entity_name.lower() }}.service';
 
 @Component({
   selector: 'app-update-{{ entity_name.lower() }}',
-  templateUrl: './update-{{ entity_name.lower() }}.component.html',
+  template: `
+    {% if figma_components %}
+        {% for component_name, component_html in figma_components.items() %}
+        {{ component_html | safe }}
+        {% endfor %}
+    {% else %}
+        <form [formGroup]="updateForm" (ngSubmit)="onSubmit()">
+            {% for prop in properties.keys() %}
+            <label for="{{ prop }}">{{ prop.capitalize() }}:</label>
+            <input id="{{ prop }}" formControlName="{{ prop }}">
+            {% endfor %}
+            <button type="submit">Update {{ entity_name }}</button>
+        </form>
+    {% endif %}
+  `,
 })
 export class Update{{ entity_name }}Component implements OnInit {
-  formData = {
-    {% for prop in properties.keys() %}
-    {{ prop }}: '',
-    {% endfor %}
-  };
-  message = '';
+  updateForm: FormGroup;
 
   constructor(
+    private fb: FormBuilder,
     private route: ActivatedRoute,
     private {{ entity_name.lower() }}Service: {{ entity_name }}Service
-  ) {}
-
-  ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    this.{{ entity_name.lower() }}Service.list().subscribe((data) => {
-      const item = data.find((item) => item.id === parseInt(id, 10));
-      if (item) {
-        this.formData = item;
-      }
+  ) {
+    this.updateForm = this.fb.group({
+      {% for prop in properties.keys() %}
+      {{ prop }}: ['', Validators.required],
+      {% endfor %}
     });
   }
 
-  onSubmit(): void {
+  ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    this.{{ entity_name.lower() }}Service.update(parseInt(id, 10), this.formData).subscribe(
-      (response) => {
-        this.message = '{{ entity_name }} atualizado com sucesso!';
-      },
-      (error) => {
-        console.error('Erro ao atualizar {{ entity_name }}:', error);
-        this.message = 'Erro ao atualizar {{ entity_name }}';
-      }
-    );
+    // Aqui você pode carregar os dados existentes para o {{ entity_name }} para preenchimento do formulário
+  }
+
+  onSubmit(): void {
+    if (this.updateForm.valid) {
+      const id = this.route.snapshot.paramMap.get('id');
+      this.{{ entity_name.lower() }}Service.update(parseInt(id, 10), this.updateForm.value).subscribe(
+        (response) => {
+          console.log('{{ entity_name }} updated successfully:', response);
+        },
+        (error) => {
+          console.error('Error updating {{ entity_name }}:', error);
+        }
+      );
+    }
   }
 }

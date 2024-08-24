@@ -1,0 +1,36 @@
+@startuml
+start
+
+:Carregar o modelo spaCy;
+
+partition "Inferir Tipo" {
+    :Verificar o nome do atributo;
+    :Retornar o tipo inferido (String, Integer, Float, DateTime);
+}
+
+partition "Extrair Propriedades do BDD" {
+    :Analisar o cenário BDD;
+    :Percorrer as sentenças;
+    if (Sentença contém "Given" ou "Dado"?) then (Sim)
+        :Extrair propriedades e tipos usando infer_type;
+    endif
+    :Retornar propriedades e seus tipos;
+}
+
+partition "Processar BDD" {
+    :Analisar o cenário BDD;
+    :Inicializar listas e variáveis;
+    :Percorrer as sentenças;
+    if (Sentença contém "Given" ou "Dado"?) then (Sim)
+        :Adicionar à lista de condições;
+    elseif (Sentença contém "When" ou "Quando"?) then (Sim)
+        :Definir ação;
+    elseif (Sentença contém "Then" ou "Então"?) then (Sim)
+        :Definir resultado esperado;
+    endif
+    :Extrair propriedades usando extract_properties_from_bdd;
+    :Retornar dicionário com condições, ação, resultado esperado e propriedades;
+}
+
+stop
+@enduml

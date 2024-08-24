@@ -1,31 +1,53 @@
+import axios from 'axios';
+
+const API_URL = 'http://localhost:5000/api/{{ entity_name.lower() }}';
+
+export const list{{ entity_name }} = async () => {
+    try {
+        const response = await axios.get(`${API_URL}/list`);
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao carregar {{ entity_name }}s:', error);
+        throw error;
+    }
+};
+
 export const create{{ entity_name }} = async (data) => {
-    const response = await fetch('/api/{{ entity_name.lower() }}', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-    });
-    return response.json();
+    try {
+        const response = await axios.post(`${API_URL}/create`, data);
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao criar {{ entity_name }}:', error);
+        throw error;
+    }
 };
 
 export const update{{ entity_name }} = async (id, data) => {
-    const response = await fetch(`/api/{{ entity_name.lower() }}/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-    });
-    return response.json();
+    try {
+        const response = await axios.put(`${API_URL}/update/${id}`, data);
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao atualizar {{ entity_name }}:', error);
+        throw error;
+    }
 };
 
 export const delete{{ entity_name }} = async (id) => {
-    const response = await fetch(`/api/{{ entity_name.lower() }}/${id}`, {
-        method: 'DELETE',
-    });
-    return response.json();
+    try {
+        const response = await axios.delete(`${API_URL}/delete/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao deletar {{ entity_name }}:', error);
+        throw error;
+    }
 };
 
-export const list{{ entity_name }} = async () => {
-    const response = await fetch('/api/{{ entity_name.lower() }}', {
-        method: 'GET',
-    });
-    return response.json();
-};
+{% if figma_components %}
+    {% for component_name, component_html in figma_components.items() %}
+    export const {{ component_name }} = () => {
+        return `
+            {{ component_html | safe }}
+        `;
+    };
+    {% endfor %}
+{% endif %}

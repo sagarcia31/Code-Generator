@@ -1,15 +1,20 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { Add{{ entity_name }}Component } from './components/add-{{ entity_name.lower() }}/add-{{ entity_name.lower() }}.component';
+import { List{{ entity_name }}Component } from './components/list-{{ entity_name.lower() }}/list-{{ entity_name.lower() }}.component';
+import { Create{{ entity_name }}Component } from './components/create-{{ entity_name.lower() }}/create-{{ entity_name.lower() }}.component';
 import { Update{{ entity_name }}Component } from './components/update-{{ entity_name.lower() }}/update-{{ entity_name.lower() }}.component';
 import { Delete{{ entity_name }}Component } from './components/delete-{{ entity_name.lower() }}/delete-{{ entity_name.lower() }}.component';
-import { List{{ entity_name }}Component } from './components/list-{{ entity_name.lower() }}/list-{{ entity_name.lower() }}.component';
 
 const routes: Routes = [
-  { path: 'add-{{ entity_name.lower() }}', component: Add{{ entity_name }}Component },
-  { path: 'update-{{ entity_name.lower() }}/:id', component: Update{{ entity_name }}Component },
-  { path: 'delete-{{ entity_name.lower() }}/:id', component: Delete{{ entity_name }}Component },
-  { path: 'list-{{ entity_name.lower() }}', component: List{{ entity_name }}Component }
+  { path: '{{ entity_name.lower() }}/list', component: List{{ entity_name }}Component },
+  { path: '{{ entity_name.lower() }}/create', component: Create{{ entity_name }}Component },
+  { path: '{{ entity_name.lower() }}/update/:id', component: Update{{ entity_name }}Component },
+  { path: '{{ entity_name.lower() }}/delete/:id', component: Delete{{ entity_name }}Component },
+  {% if figma_components %}
+    {% for component_name, component_html in figma_components.items() %}
+    { path: '{{ component_name.lower() }}', component: YourFigmaComponent },  <!-- Substitua `YourFigmaComponent` pelo componente Angular gerado -->
+    {% endfor %}
+  {% endif %}
 ];
 
 @NgModule({

@@ -1,49 +1,41 @@
 import React, { useState } from 'react';
-import { create{{ entity_name }} } from '../services/{{ entity_name.lower() }}Service';
+import {{ entity_name }}Service from '../../services/{{ entity_name.lower() }}.service';
 
-function Add{{ entity_name }}() {
-    const [formData, setFormData] = useState({
-        {% for prop in properties.keys() %}
-        {{ prop }}: '',
-        {% endfor %}
-    });
-    const [message, setMessage] = useState('');
+const Create{{ entity_name }} = () => {
+  const [name, setName] = useState('');
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
-    };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    {{ entity_name }}Service.create({ name })
+      .then(response => {
+        console.log('{{ entity_name }} created successfully:', response);
+      })
+      .catch(error => {
+        console.error('Error creating {{ entity_name }}:', error);
+      });
+  }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await create{{ entity_name }}(formData);
-            setMessage(response.message);
-        } catch (error) {
-            setMessage('Erro ao adicionar {{ entity_name }}');
-        }
-    };
-
-    return (
-        <div>
-            <h2>Adicionar {{ entity_name }}</h2>
-            <form onSubmit={handleSubmit}>
-                {% for prop in properties.keys() %}
-                <label>{ { prop.capitalize() } }:</label>
-                <input
+  return (
+    <div className="create-container">
+      {% if figma_components %}
+          {% for component_name, component_html in figma_components.items() %}
+          <div dangerouslySetInnerHTML={{ __html: "{{ component_html | safe }}" }} />
+          {% endfor %}
+      {% else %}
+          <form onSubmit={handleSubmit}>
+              <label>
+                  {{ entity_name }} Name:
+                  <input
                     type="text"
-                    name="{{ prop }}"
-                    value={formData.{{ prop }}}
-                    onChange={handleChange}
-                />
-                {% endfor %}
-                <button type="submit">Adicionar</button>
-            </form>
-            {message && <p>{message}</p>}
-        </div>
-    );
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                  />
+              </label>
+              <button type="submit">Create {{ entity_name }}</button>
+          </form>
+      {% endif %}
+    </div>
+  );
 }
 
-export default Add{{ entity_name }};
+export default Create{{ entity_name }};

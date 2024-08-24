@@ -4,18 +4,34 @@ from back_end.generator import generate_model, generate_controller, generate_rou
 from front_end.generator import generate_component, generate_service, generate_routes as generate_fe_routes
 from process_story import process_user_story
 from process_bdd import process_bdd
+from figma_integration.extract_design import extract_design_from_figma, map_figma_to_component
 
 def load_template_mapping():
     with open('config/template_mapping.json', 'r') as f:
         return json.load(f)
 
-def orchestrate_generation(user_story, bdd_scenario, tech_stack):
+def orchestrate_generation(user_story, bdd_scenario, tech_stack, figma_file_key=None, figma_access_token=None):
     # Carregar mapeamento de templates
     template_mapping = load_template_mapping()
 
     # Processa a história de usuário e o BDD
     story_data = process_user_story(user_story)
     bdd_data = process_bdd(bdd_scenario)
+
+    figma_components = {}
+
+    # Verificação opcional para integração com Figma
+    if figma_file_key and figma_access_token:
+        try:
+            figma_data = extract_design_from_figma(figma_file_key, figma_access_token)
+            figma_components = map_figma_to_component(figma_data)
+        except Exception as e:
+            print(f"Falha ao integrar com Figma: {e}")
+            figma_components = {}
+
+    # Extração de dados do Figma
+    figma_data = extract_design_from_figma("figma_file_key", "figma_access_token")
+    figma_components = map_figma_to_component(figma_data)
 
     # Extração das informações processadas
     entity_name = story_data['model_name']

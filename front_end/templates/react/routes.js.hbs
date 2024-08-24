@@ -1,18 +1,25 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Add{{ entity_name }} from './components/Add{{ entity_name }}';
+import List{{ entity_name }} from './components/List{{ entity_name }}';
+import Create{{ entity_name }} from './components/Create{{ entity_name }}';
 import Update{{ entity_name }} from './components/Update{{ entity_name }}';
 import Delete{{ entity_name }} from './components/Delete{{ entity_name }}';
-import List{{ entity_name }} from './components/List{{ entity_name }}';
 
 function AppRoutes() {
     return (
         <Router>
             <Switch>
-                <Route path="/add-{{ entity_name.lower() }}" component={Add{{ entity_name }}} />
-                <Route path="/update-{{ entity_name.lower() }}/:id" component={Update{{ entity_name }}} />
-                <Route path="/delete-{{ entity_name.lower() }}/:id" component={Delete{{ entity_name }}} />
-                <Route path="/list-{{ entity_name.lower() }}" component={List{{ entity_name }}} />
+                <Route path="/{{ entity_name.lower() }}/list" component={List{{ entity_name }}} />
+                <Route path="/{{ entity_name.lower() }}/create" component={Create{{ entity_name }}} />
+                <Route path="/{{ entity_name.lower() }}/update/:id" component={Update{{ entity_name }}} />
+                <Route path="/{{ entity_name.lower() }}/delete/:id" component={Delete{{ entity_name }}} />
+                {% if figma_components %}
+                    {% for component_name, component_html in figma_components.items() %}
+                    <Route path="/{{ component_name.lower() }}" component={() => (
+                        <div dangerouslySetInnerHTML={{ __html: "{{ component_html | safe }}" }} />
+                    )} />
+                    {% endfor %}
+                {% endif %}
             </Switch>
         </Router>
     );

@@ -6,23 +6,33 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class {{ entity_name }}Service {
-  private apiUrl = '/api/{{ entity_name.lower() }}';
+  private apiUrl = 'http://localhost:5000/api/{{ entity_name.lower() }}';
 
   constructor(private http: HttpClient) {}
 
+  list(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/list`);
+  }
+
   create(data: any): Observable<any> {
-    return this.http.post(this.apiUrl, data);
+    return this.http.post<any>(`${this.apiUrl}/create`, data);
   }
 
   update(id: number, data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, data);
+    return this.http.put<any>(`${this.apiUrl}/update/${id}`, data);
   }
 
   delete(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+    return this.http.delete<any>(`${this.apiUrl}/delete/${id}`);
   }
 
-  list(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
-  }
+  {% if figma_components %}
+    {% for component_name, component_html in figma_components.items() %}
+    public get{{ component_name }}Html(): string {
+        return `
+            {{ component_html | safe }}
+        `;
+    }
+    {% endfor %}
+  {% endif %}
 }

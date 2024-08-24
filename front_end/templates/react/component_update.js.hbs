@@ -33,18 +33,24 @@ function Update{{ entity_name }}({ match }) {
     return (
         <div>
             <h2>Atualizar {{ entity_name }}</h2>
-            <form onSubmit={handleSubmit}>
-                {% for prop in properties.keys() %}
-                <label>{ { prop.capitalize() } }:</label>
-                <input
-                    type="text"
-                    name="{{ prop }}"
-                    value={formData.{{ prop }}}
-                    onChange={handleChange}
-                />
+            {% if figma_components %}
+                {% for component_name, component_html in figma_components.items() %}
+                <div dangerouslySetInnerHTML={{ __html: "{{ component_html | safe }}" }} />
                 {% endfor %}
-                <button type="submit">Atualizar</button>
-            </form>
+            {% else %}
+                <form onSubmit={handleSubmit}>
+                    {% for prop in properties.keys() %}
+                    <label>{{ prop.capitalize() }}:</label>
+                    <input
+                        type="text"
+                        name="{{ prop }}"
+                        value={formData.{{ prop }}}
+                        onChange={handleChange}
+                    />
+                    {% endfor %}
+                    <button type="submit">Atualizar</button>
+                </form>
+            {% endif %}
             {message && <p>{message}</p>}
         </div>
     );

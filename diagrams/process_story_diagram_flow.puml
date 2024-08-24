@@ -1,0 +1,24 @@
+@startuml
+start
+
+:Carregar o modelo spaCy;
+
+partition "Inferir Tipo" {
+    :Inferir o tipo de dado baseado no nome do atributo;
+}
+
+partition "Extrair Propriedades do BDD" {
+    :Analisar o cenário BDD;
+    :Extrair propriedades e tipos das sentenças 'Given' ou 'Dado';
+}
+
+partition "Processar BDD" {
+    :Analisar o cenário BDD;
+    :Identificar condições, ação, e resultado esperado;
+    :Extrair propriedades usando extract_properties_from_bdd;
+}
+
+:Retornar resultado;
+
+stop
+@enduml

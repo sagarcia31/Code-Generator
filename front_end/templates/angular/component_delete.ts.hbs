@@ -1,33 +1,40 @@
-import React, { useState } from 'react';
-import { delete{{ entity_name }} } from '../services/{{ entity_name.lower() }}Service';
+import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { {{ entity_name }}Service } from '../../services/{{ entity_name.lower() }}.service';
 
-function Delete{{ entity_name }}({ match }) {
-    const [message, setMessage] = useState('');
-
-    const handleDelete = async () => {
-        try {
-            const response = await delete{{ entity_name }}(match.params.id);
-            setMessage('{{ entity_name }} deletado com sucesso!');
-        } catch (error) {
-            setMessage('Erro ao deletar {{ entity_name }}');
-        }
-    };
-
-    return (
-        <div>
-            <h2>Deletar {{ entity_name }}</h2>
-            {% if figma_components %}
-                {% for component_name, component_html in figma_components.items() %}
-                <div dangerouslySetInnerHTML={{ __html: "{{ component_html | safe }}" }} />
-                {% endfor %}
-            {% else %}
-                <div>
-                    <p>{message}</p>
-                    <button onClick={handleDelete}>Deletar {{ entity_name }}</button>
-                </div>
-            {% endif %}
+@Component({
+  selector: 'app-delete-{{ entity_name.lower() }}',
+  template: `
+    {% if figma_components %}
+        {% for component_name, component_html in figma_components.items() %}
+        {{ component_html | safe }}
+        {% endfor %}
+    {% else %}
+        <div class="delete-container">
+            <p>{{ message }}</p>
+            <button (click)="onDelete()">Deletar {{ entity_name }}</button>
         </div>
-    );
-}
+    {% endif %}
+  `,
+})
+export class Delete{{ entity_name }}Component {
+  message = '';
 
-export default Delete{{ entity_name }};
+  constructor(
+    private route: ActivatedRoute,
+    private {{ entity_name.lower() }}Service: {{ entity_name }}Service
+  ) {}
+
+  onDelete(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    this.{{ entity_name.lower() }}Service.delete(parseInt(id, 10)).subscribe(
+      (response) => {
+        this.message = '{{ entity_name }} deletado com sucesso!';
+      },
+      (error) => {
+        console.error('Erro ao deletar {{ entity_name }}:', error);
+        this.message = 'Erro ao deletar {{ entity_name }}';
+      }
+    );
+  }
+}

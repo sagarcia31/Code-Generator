@@ -31,9 +31,6 @@ def orchestrate_generation(user_story, bdd_scenario, tech_stack):
     controller_template = backend_templates[action_name]
     backend_routes_template = backend_templates['routes']
 
-    component_template = frontend_templates[action_name]
-    frontend_routes_template = frontend_templates['routes']
-
     # Geração do back-end
     model_code = generate_model(model_template, entity_name, properties)
     controller_code = generate_controller(controller_template, entity_name, entity_var, properties, bdd_data)
@@ -53,13 +50,19 @@ def orchestrate_generation(user_story, bdd_scenario, tech_stack):
         f.write(back_end_routes)
 
     # Geração do front-end
-    component_code = generate_component(component_template, entity_name, properties, bdd_data)
-    service_code = generate_service(frontend_templates['service'], entity_name, properties)
+
+    frontend_component_template = frontend_templates[action_name]
+    frontend_routes_template = frontend_templates['routes']
+    frontend_service_template = frontend_templates['service']
+
+    component_code = generate_component(frontend_component_template, entity_name, properties, bdd_data)
+    service_code = generate_service(frontend_service_template, entity_name, properties)
     front_end_routes = generate_fe_routes(frontend_routes_template, entity_name)
 
     # Criar diretórios para o front-end se não existirem
     os.makedirs('front_end/src/components', exist_ok=True)
     os.makedirs('front_end/src/services', exist_ok=True)
+    os.makedirs('front_end/src/routes', exist_ok=True)
 
     # Escrever os arquivos gerados para o front-end
     with open(f'front_end/src/components/List{entity_name}.js', 'w') as f:

@@ -1,0 +1,13 @@
+@startuml
+actor User
+
+User -> FigmaIntegration : extract_design_from_figma(figma_file_key, figma_access_token)
+FigmaIntegration -> requests : get(figma_file_key, headers)
+requests --> FigmaIntegration : response
+FigmaIntegration -> FigmaIntegration : process response
+
+User -> FigmaIntegration : map_figma_to_component(figma_data)
+FigmaIntegration -> FigmaIntegration : process figma_data
+FigmaIntegration --> User : mapped_components
+
+@enduml

@@ -1,0 +1,7 @@
+@startuml
+actor System
+System -> StoryProcessor : user_story
+StoryProcessor -> spaCy : load_spaCy_model
+StoryProcessor -> StoryProcessor : process_user_story(user_story)
+StoryProcessor -> System : return_result
+@enduml

@@ -6,4 +6,4 @@ from .controllers import create_{{ entity_var }}, update_{{ entity_var }}, delet
 {{ entity_name.lower() }}_bp.route('/{{ entity_name.lower() }}', methods=['POST'])(create_{{ entity_var }})
 {{ entity_name.lower() }}_bp.route('/{{ entity_name.lower() }}/<int:id>', methods=['PUT'])(update_{{ entity_var }})
 {{ entity_name.lower() }}_bp.route('/{{ entity_name.lower() }}/<int:id>', methods=['DELETE'])(delete_{{ entity_var }})
-{{ entity_name.lower() }}_bp.route('/{{ entity_name.lower() }}', methods=['GET'])(list_{{ entity_var }})
+{{ entity_name.lower() }}_bp.route('/{{ entity_name.lower() }}', methods=['GET'])(list_{{ entity_var }})xxax

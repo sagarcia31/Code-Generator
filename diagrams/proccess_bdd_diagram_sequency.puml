@@ -1,14 +1,14 @@
 
 @startuml
-actor Sistema
+actor System
 
 Sistema -> BDDProcessor : bdd_scenario
 
-BDDProcessor -> spaCy : Carregar modelo spaCy
+BDDProcessor -> spaCy : load_spaCy_model
 BDDProcessor -> BDDProcessor : process_bdd(bdd_scenario)
 BDDProcessor -> BDDProcessor : extract_properties_from_bdd(bdd_scenario)
 BDDProcessor -> BDDProcessor : infer_type(attribute)
 
-BDDProcessor -> Sistema : Retorna resultado
+BDDProcessor -> System : return_result
 
 @enduml

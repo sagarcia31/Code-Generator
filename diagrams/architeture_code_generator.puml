@@ -1,0 +1,31 @@
+@startuml
+actor User
+
+package "Motor de Geração de Código" {
+
+    component "Entrada de Dados" as Input {
+        :User Stories;
+        :BDD;
+    }
+
+    component "Selecionar Template" as SelectTemplate {
+        :Tecnologia (Flask, Angular, etc);
+    }
+
+    component "Preencher Template" as FillTemplate {
+        :Substituir Marcadores;
+        :Com Dados Processados;
+    }
+
+    component "Gerar Arquivos" as GenerateFiles {
+        :Salvar Código Gerado;
+        :Estruturar em Arquivos;
+    }
+}
+
+User --> Input : Fornece
+Input --> SelectTemplate : Processa Dados
+SelectTemplate --> FillTemplate : Seleciona Template
+FillTemplate --> GenerateFiles : Gera Código
+
+@enduml

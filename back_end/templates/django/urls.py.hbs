@@ -1,9 +1,0 @@
-from django.urls import path
-from .views import create_{{ entity_var }}, update_{{ entity_var }}, delete_{{ entity_var }}, list_{{ entity_var }}
-
-urlpatterns = [
-    path('{{ entity_name.lower() }}/create/', create_{{ entity_var }}, name='create_{{ entity_var }}'),
-    path('{{ entity_name.lower() }}/update/<int:id>/', update_{{ entity_var }}, name='update_{{ entity_var }}'),
-    path('{{ entity_name.lower() }}/delete/<int:id>/', delete_{{ entity_var }}, name='delete_{{ entity_var }}'),
-    path('{{ entity_name.lower() }}/list/', list_{{ entity_var }}, name='list_{{ entity_var }}'),
-]

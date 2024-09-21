@@ -18,17 +18,21 @@ def infer_type(attribute):
 def extract_properties_from_bdd(bdd_scenario):
     doc = nlp(bdd_scenario)
     
-    properties = {}
+    properties = []
 
     for sent in doc.sents:
-        # Verificar se a sentença define propriedades, por exemplo, "Given que o produto tem um nome, preço e quantidade definidos"
+        # Verificar se a sentença define propriedades
         if "Given" in sent.text or "Dado" in sent.text:
-            # Extrair possíveis propriedades e seus tipos
+            # Extrair possíveis propriedades, procurando por substantivos e inferindo o tipo
             for token in sent:
-                if token.text.lower() in ['nome', 'preço', 'quantidade']:
+                if token.pos_ == 'NOUN':  # Verifica se o token é um substantivo
                     prop_name = token.text.lower()
                     prop_type = infer_type(prop_name)
-                    properties[prop_name] = prop_type
+                    # Adiciona a propriedade como um dicionário
+                    properties.append({
+                        'name': prop_name,
+                        'type': prop_type
+                    })
 
     return properties
 

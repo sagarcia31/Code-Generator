@@ -1,19 +1,10 @@
 {
   "backend": {
     "flask": {
-      "model":  "back_end/templates/flask/model.py.hbs",  
-      "routes": "back_end/templates/flask/routes.py.hbs",
-      "create": "back_end/templates/flask/controller_create.py.hbs",
-      "update": "back_end/templates/flask/controller_update.py.hbs",
-      "delete": "back_end/templates/flask/controller_delete.py.hbs",
-      "list":   "back_end/templates/flask/controller_list.py.hbs"
-    },
-    "django": {
-      "model":  "back_end/templates/django/model.py.hbs", 
-      "routes": "back_end/templates/django/urls.py.hbs", 
-      "update": "back_end/templates/django/views_update.py.hbs",
-      "delete": "back_end/templates/django/views_delete.py.hbs",
-      "list":   "back_end/templates/django/views_list.py.hbs"
+      "controller": "back_end/templates/flask/controller.py.hbs",
+      "model":      "back_end/templates/flask/model.py.hbs",
+      "repository": "back_end/templates/flask/repository.py.hbs",
+      "routes":     "back_end/templates/flask/routes.py.hbs"
     }
   },
   "frontend": {

@@ -1,0 +1,25 @@
+from .models import {{ entity_name }}
+
+class {{ entity_name }}Repository:
+    def __init__(self, db):
+        self.db = db
+
+    def get_all(self):
+        return {{ entity_name }}.query.all()
+
+    def get_by_id(self, id):
+        return {{ entity_name }}.query.get(id)
+
+    def create(self, data):
+        new_{{ entity_var }} = {{ entity_name }}(**data)
+        self.db.session.add(new_{{ entity_var }})
+        self.db.session.commit()
+        return new_{{ entity_var }}
+
+    def delete(self, id):
+        {{ entity_var }} = self.get_by_id(id)
+        if {{ entity_var }}:
+            self.db.session.delete({{ entity_var }})
+            self.db.session.commit()
+            return True
+        return False

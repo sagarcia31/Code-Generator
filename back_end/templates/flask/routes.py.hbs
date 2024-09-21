@@ -1,9 +1,4 @@
-from flask import Blueprint
-from .controllers import create_{{ entity_var }}, update_{{ entity_var }}, delete_{{ entity_var }}, list_{{ entity_var }}
+from .controllers.{{ entity_name }}Controller import {{ entity_var }}_blueprint
 
-{{ entity_name.lower() }}_bp = Blueprint('{{ entity_name.lower() }}', __name__)
-
-{{ entity_name.lower() }}_bp.route('/{{ entity_name.lower() }}', methods=['POST'])(create_{{ entity_var }})
-{{ entity_name.lower() }}_bp.route('/{{ entity_name.lower() }}/<int:id>', methods=['PUT'])(update_{{ entity_var }})
-{{ entity_name.lower() }}_bp.route('/{{ entity_name.lower() }}/<int:id>', methods=['DELETE'])(delete_{{ entity_var }})
-{{ entity_name.lower() }}_bp.route('/{{ entity_name.lower() }}', methods=['GET'])(list_{{ entity_var }})xxax
+def register_{{ entity_var }}_routes(app):
+    app.register_blueprint({{ entity_var }}_blueprint)

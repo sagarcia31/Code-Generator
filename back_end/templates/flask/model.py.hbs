@@ -1,20 +1,16 @@
-from flask_sqlalchemy import SQLAlchemy
+{% set column_types = [] %}
+{% for prop in properties %}
+    {% if prop['type'] and prop['type'] not in column_types %}
+        {% set _ = column_types.append(prop['type']) %}
+    {% endif %}
+{% endfor %}
 
-db = SQLAlchemy()
+{% if column_types %}
+from sqlalchemy import Column, {{ ', '.join(column_types) }}
+{% endif %}
+from .db import db
 
 class {{ entity_name }}(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    {% for prop, dtype in properties.items() %}
-    {{ prop }} = db.Column(db.{{ dtype }})
+    {% for prop in properties %}
+    {{ prop['name'] }} = Column({{ prop['type'] }}{% if prop.get('primary_key') %}, primary_key=True{% endif %})
     {% endfor %}
-
-    def __repr__(self):
-        return f"<{{ entity_name }} {{ '{{ self.id }}' }}>"
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            {% for prop in properties.keys() %}
-            "{{ prop }}": self.{{ prop }},
-            {% endfor %}
-        }

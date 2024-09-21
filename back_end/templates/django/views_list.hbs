@@ -1,8 +1,0 @@
-from django.http import JsonResponse
-from .models import {{ entity_name }}
-
-def list_{{ entity_var }}(request):
-    if request.method == 'GET':
-        all_{{ entity_var }}s = {{ entity_name }}.objects.all()
-        result = [{{ entity_var }}.to_dict() for {{ entity_var }} in all_{{ entity_var }}s]
-        return JsonResponse(result, safe=False)

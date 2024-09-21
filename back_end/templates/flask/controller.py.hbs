@@ -1,0 +1,20 @@
+from flask import Blueprint, request, jsonify
+
+{{ entity_var }}_blueprint = Blueprint('{{ entity_var }}', __name__)
+
+@{{ entity_var }}_blueprint.route('/{{ entity_var }}', methods=['GET'])
+def get_{{ entity_var }}():
+    return jsonify({{ entity_var }}_service.get_all())
+
+@{{ entity_var }}_blueprint.route('/{{ entity_var }}/<id>', methods=['GET'])
+def get_{{ entity_var }}_by_id(id):
+    return jsonify({{ entity_var }}_service.get_by_id(id))
+
+@{{ entity_var }}_blueprint.route('/{{ entity_var }}', methods=['POST'])
+def create_{{ entity_var }}():
+    data = request.json
+    return jsonify({{ entity_var }}_service.create(data))
+
+@{{ entity_var }}_blueprint.route('/{{ entity_var }}/<id>', methods=['DELETE'])
+def delete_{{ entity_var }}(id):
+    return jsonify({{ entity_var }}_service.delete(id))

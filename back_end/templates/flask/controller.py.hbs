@@ -18,3 +18,6 @@ def create_{{ entity_var }}():
 @{{ entity_var }}_blueprint.route('/{{ entity_var }}/<id>', methods=['DELETE'])
 def delete_{{ entity_var }}(id):
     return jsonify({{ entity_var }}_service.delete(id))
+
+# Serviço injetado aqui
+{{ entity_var }}_service = {{ entity_name }}Service({{ entity_name }}Repository(db))

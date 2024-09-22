@@ -1,16 +1,16 @@
 {% set column_types = [] %}
 {% for prop in properties %}
-    {% if prop['type'] and prop['type'] not in column_types %}
-        {% set _ = column_types.append(prop['type']) %}
+    {% if prop['type'].split('(')[0] not in column_types %}
+        {% set _ = column_types.append(prop['type'].split('(')[0]) %}
     {% endif %}
 {% endfor %}
 
-{% if column_types %}
+{%- if column_types %}
 from sqlalchemy import Column, {{ ', '.join(column_types) }}
 {% endif %}
 from .db import db
 
 class {{ entity_name }}(db.Model):
-    {% for prop in properties %}
-    {{ prop['name'] }} = Column({{ prop['type'] }}{% if prop.get('primary_key') %}, primary_key=True{% endif %})
-    {% endfor %}
+    {%- for prop in properties %}
+    {{ prop['name'] }} = Column({{ prop['type'] }}{% if prop.get('primary_key', False) %}, primary_key=True{% endif %})
+    {%- endfor %}

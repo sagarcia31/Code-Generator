@@ -1,4 +1,3 @@
-
 from jinja2 import Environment, FileSystemLoader
 import os
 
@@ -22,7 +21,6 @@ def generate_model(template_path, entity_name, properties):
     """
     return generate_code(template_path, entity_name=entity_name, properties=properties)
 
-
 def generate_controller(template_path, entity_name, entity_var, properties, bdd_data):
     """
     Gera o código do Controller.
@@ -44,7 +42,6 @@ def generate_controller(template_path, entity_name, entity_var, properties, bdd_
         bdd_expected_result=bdd_data['expected_result']
     )
 
-
 def generate_repository(template_path, entity_name, entity_var):
     """
     Gera o código do Repository a partir do template.
@@ -56,6 +53,16 @@ def generate_repository(template_path, entity_name, entity_var):
     """
     return generate_code(template_path, entity_name=entity_name, entity_var=entity_var)
 
+def generate_service(template_path, entity_name, entity_var):
+    """
+    Gera o código do Service a partir do template.
+
+    :param template_path: Caminho do template do service.
+    :param entity_name: Nome da entidade.
+    :param entity_var: Nome da entidade em formato de variável (minúsculo).
+    :return: Código gerado do service.
+    """
+    return generate_code(template_path, entity_name=entity_name, entity_var=entity_var)
 
 def generate_routes(template_path, entity_name, entity_var):
     """

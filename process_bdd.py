@@ -1,49 +1,28 @@
 import spacy
 
-nlp = spacy.load('pt_core_news_sm')
+# Carregar o modelo treinado de BDD
+nlp = spacy.load('./bdd_model')  # Carregar o modelo treinado para BDD
 
-def infer_type(attribute):
-    # Inferir o tipo de dado baseado no nome do atributo
-    if 'nome' in attribute.lower() or 'descrição' in attribute.lower() or 'endereço' in attribute.lower():
-        return 'String(255)'
-    elif 'quantidade' in attribute.lower() or 'idade' in attribute.lower() or 'id' in attribute.lower():
-        return 'Integer'
-    elif 'preço' in attribute.lower() or 'salário' in attribute.lower() or 'valor' in attribute.lower():
-        return 'Float'
-    elif 'data' in attribute.lower() or 'criado' in attribute.lower() or 'modificado' in attribute.lower():
-        return 'DateTime'
-    else:
-        return 'String(255)'  # Tipo padrão
+# Adicionar o sentencizer à pipeline, caso ele não esteja presente
+if 'sentencizer' not in nlp.pipe_names:
+    nlp.add_pipe('sentencizer')
 
-def extract_properties_from_bdd(bdd_scenario):
-    doc = nlp(bdd_scenario)
-    
-    properties = []
-
-    for sent in doc.sents:
-        # Verificar se a sentença define propriedades
-        if "Given" in sent.text or "Dado" in sent.text:
-            # Extrair possíveis propriedades, procurando por substantivos e inferindo o tipo
-            for token in sent:
-                if token.pos_ == 'NOUN':  # Verifica se o token é um substantivo
-                    prop_name = token.text.lower()
-                    prop_type = infer_type(prop_name)
-                    # Adiciona a propriedade como um dicionário
-                    properties.append({
-                        'name': prop_name,
-                        'type': prop_type
-                    })
-
-    return properties
-
+# Função para processar o cenário BDD usando o modelo treinado
 def process_bdd(bdd_scenario):
+    # Processa o cenário BDD com o modelo treinado
     doc = nlp(bdd_scenario)
 
     conditions = []
     action = ""
     expected_result = ""
+    properties = []
+    actors = []
+    locations = []
+    outcomes = []
+    model_names = []
 
     for sent in doc.sents:
+        # Detecta o "Given", "When" e "Then" no texto BDD
         if "Given" in sent.text or "Dado" in sent.text:
             conditions.append(sent.text.strip())
         elif "When" in sent.text or "Quando" in sent.text:
@@ -51,12 +30,31 @@ def process_bdd(bdd_scenario):
         elif "Then" in sent.text or "Então" in sent.text:
             expected_result = sent.text.strip()
 
-    # Extração das propriedades
-    properties = extract_properties_from_bdd(bdd_scenario)
+        # Extração das entidades diretamente do modelo treinado
+        for ent in sent.ents:
+            if ent.label_ == "PROPERTY":
+                properties.append({
+                    'name': ent.text.lower(),
+                    'type': ent.label_  # O modelo já fornece o tipo
+                })
+            elif ent.label_ == "ACTOR":
+                actors.append(ent.text)
+            elif ent.label_ == "ACTION":
+                action = ent.text
+            elif ent.label_ == "LOCATION":
+                locations.append(ent.text)
+            elif ent.label_ == "OUTCOME":
+                outcomes.append(ent.text)
+            elif ent.label_ == "MODEL_NAME":
+                model_names.append(ent.text)
 
     return {
         "conditions": conditions,
         "action": action,
         "expected_result": expected_result,
-        "properties": properties
+        "properties": properties,
+        "actors": actors,
+        "locations": locations,
+        "outcomes": outcomes,
+        "model_names": model_names
     }

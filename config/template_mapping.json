@@ -4,7 +4,8 @@
       "controller": "back_end/templates/flask/controller.py.hbs",
       "model":      "back_end/templates/flask/model.py.hbs",
       "repository": "back_end/templates/flask/repository.py.hbs",
-      "routes":     "back_end/templates/flask/routes.py.hbs"
+      "routes":     "back_end/templates/flask/routes.py.hbs",
+      "service":      "back_end/templates/flask/service.py.hbs"
     }
   },
   "frontend": {

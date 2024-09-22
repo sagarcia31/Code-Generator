@@ -4,9 +4,7 @@ import shutil
 def remove_generated_files_and_pycache(directory):
     # Lista de diretórios que queremos limpar
     directories_to_clean = [
-        'back_end/models',
-        'back_end/controllers',
-        'back_end/routes',
+        'back_end/generated',
         'front_end/src/components',
         'front_end/src/services',
         'front_end/src'

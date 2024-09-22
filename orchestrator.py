@@ -47,23 +47,28 @@ def orchestrate_generation(user_story, bdd_scenario, tech_stack, figma_file_key=
     repository_template = backend_templates['repository']
     route_template = backend_templates['routes']
     model_template = backend_templates['model']
+    service_template = backend_templates['service']
 
     # Geração do back-end
     model_code = generate_model(model_template, entity_name, properties)
     controller_code = generate_controller(controller_template, entity_name, entity_var, properties, bdd_data)
     repository_code= generate_repository(repository_template, entity_name, entity_var)
     routes_code = generate_routes(route_template, entity_name, entity_var)
+    service_code = generate_service(service_template, entity_name, properties)
 
     generated_backend_base_dir = 'back_end/generated/'
     backend_models = generated_backend_base_dir + 'models'
     backend_controllers = generated_backend_base_dir + 'controllers'
     backend_repositories = generated_backend_base_dir + 'repositories'
     backend_routes = generated_backend_base_dir + 'routes'
+    backend_services = generated_backend_base_dir + 'services'
+    
     # Criar diretórios se não existirem
     os.makedirs(backend_models, exist_ok=True)
     os.makedirs(backend_controllers, exist_ok=True)
     os.makedirs(backend_routes, exist_ok=True)
     os.makedirs(backend_repositories, exist_ok=True)
+    os.makedirs(backend_services, exist_ok=True)
 
 
     # Escrever os arquivos gerados para o back-end
@@ -75,6 +80,8 @@ def orchestrate_generation(user_story, bdd_scenario, tech_stack, figma_file_key=
         f.write(repository_code)
     with open(f'{backend_routes}/{action_name}.py', 'w') as f:
         f.write(routes_code)
+    with open(f'{backend_services}/{action_name}.py', 'w') as f:
+        f.write(service_code)
 
     # Geração do front-end
 
@@ -104,17 +111,9 @@ def orchestrate_generation(user_story, bdd_scenario, tech_stack, figma_file_key=
 if __name__ == "__main__":
     user_story = "Como um usuário, eu quero visualizar uma lista de produtos para que eu possa escolher um produto"
     bdd_scenario = """
-    Scenario: Exibir lista de produtos
-        Given que o produto tem um nome, preço e quantidade definidos
-        When o usuário entra na pagina pela primeira vez
-        Then a lista com os produtos deve ser exibida
-        And a lista de produtos deve exibir no máximo 100 itens por página
-
-    Scenario: Carregando a lista de produtos
-        Given que estou carregando a lista de produtos
-        When a lista ainda não foi carregada
-        Then uma tela com um loading circular aparece
-        And após a lista ser carregada o loading desaparece
+        Dado que o produto tem um nome, preço e quantidade definidos
+        Quando o usuário entra na pagina pela primeira vez
+        Então a lista com os produtos deve ser exibida
     """
     
     tech_stack = {

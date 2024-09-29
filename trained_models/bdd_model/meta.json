@@ -24,10 +24,6 @@
       "MODEL_NAME",
       "OUTCOME",
       "PROPERTY",
-      "PROPERTY (DateTime)",
-      "PROPERTY (Float)",
-      "PROPERTY (Integer)",
-      "PROPERTY (String)",
       "RESULT"
     ]
   },

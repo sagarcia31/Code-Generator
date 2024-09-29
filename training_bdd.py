@@ -20,14 +20,24 @@ ner.add_label("LOCATION")
 ner.add_label("RESULT")
 ner.add_label("OUTCOME")
 
+# Adicionar uma extensão personalizada 'tipo' para spans
+spacy.tokens.Span.set_extension("tipo", default=None)
+
+# Função para adicionar spans ao doc com tipo
+def add_custom_span(doc, start, end, label, tipo=None):
+    span = doc.char_span(start, end, label=label)
+    if span:
+        span._.tipo = tipo  # Definir o tipo como um atributo personalizado
+        doc.ents = list(doc.ents) + [span]
+
 # Função para verificar sobreposição de entidades
 def entidades_validas(annotations):
     valid_annotations = []
     occupied_indices = set()
     
-    for start, end, label in annotations:
+    for start, end, label, tipo in annotations:
         if not any(i in occupied_indices for i in range(start, end)):  # Verificar se há sobreposição
-            valid_annotations.append((start, end, label))
+            valid_annotations.append((start, end, label, tipo))
             occupied_indices.update(range(start, end))  # Marcar esses índices como ocupados
     
     return valid_annotations
@@ -109,15 +119,15 @@ def gerar_bdd_story_com_tipo():
     
     # Anotações
     annotations = [
-        (start_model_name, end_model_name, "MODEL_NAME"),
-        (start_prop_1, end_prop_1, f"PROPERTY ({tipo_prop_1})"),
-        (start_prop_2, end_prop_2, f"PROPERTY ({tipo_prop_2})"),
-        (start_prop_3, end_prop_3, f"PROPERTY ({tipo_prop_3})"),
-        (start_actor, end_actor, "ACTOR"),
-        (start_action, end_action, "ACTION"),
-        (start_location, end_location, "LOCATION"),
-        (start_result, end_result, "RESULT"),
-        (start_outcome, end_outcome, "OUTCOME")
+        (start_model_name, end_model_name, "MODEL_NAME", None),
+        (start_prop_1, end_prop_1, "PROPERTY", tipo_prop_1),
+        (start_prop_2, end_prop_2, "PROPERTY", tipo_prop_2),
+        (start_prop_3, end_prop_3, "PROPERTY", tipo_prop_3),
+        (start_actor, end_actor, "ACTOR", None),
+        (start_action, end_action, "ACTION", None),
+        (start_location, end_location, "LOCATION", None),
+        (start_result, end_result, "RESULT", None),
+        (start_outcome, end_outcome, "OUTCOME", None)
     ]
     
     # Remover sobreposições de entidades
@@ -132,8 +142,14 @@ dataset_bdd_com_tipo = [gerar_bdd_story_com_tipo() for _ in range(100)]
 TRAIN_DATA_BDD = []
 for dado, quando, entao, annotations in dataset_bdd_com_tipo:
     texto_bdd = f"{dado}. {quando}. {entao}."
-    entidades = {"entities": [ent for ent in annotations]}
-    TRAIN_DATA_BDD.append((texto_bdd, entidades))
+    doc = nlp.make_doc(texto_bdd)
+
+    # Adicionar spans personalizados
+    for start, end, label, tipo in annotations:
+        add_custom_span(doc, start, end, label, tipo)
+    
+    example = Example.from_dict(doc, {"entities": [(span.start_char, span.end_char, span.label_) for span in doc.ents]})
+    TRAIN_DATA_BDD.append(example)
 
 # Treinamento
 optimizer = nlp.begin_training()
@@ -142,11 +158,9 @@ optimizer = nlp.begin_training()
 for i in range(30):
     random.shuffle(TRAIN_DATA_BDD)
     losses = {}
-    for text, annotations in TRAIN_DATA_BDD:
-        doc = nlp.make_doc(text)
-        example = Example.from_dict(doc, annotations)
+    for example in TRAIN_DATA_BDD:
         nlp.update([example], drop=0.5, losses=losses)
     print(f"Iteração {i + 1}, perdas: {losses}")
 
 # Salvar o modelo treinado
-nlp.to_disk("./bdd_model")
+nlp.to_disk("./trained_models/bdd_model")

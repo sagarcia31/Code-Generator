@@ -1,9 +1,13 @@
 import spacy
 
-# Carregar o modelo treinado de BDD
-nlp = spacy.load('./bdd_model')  # Carregar o modelo treinado para BDD
+# Registrar a extensão 'tipo' se ainda não foi registrada
+if not spacy.tokens.Span.has_extension("tipo"):
+    spacy.tokens.Span.set_extension("tipo", default=None)
 
-# Adicionar o sentencizer à pipeline, caso ele não esteja presente
+# Carregar o modelo treinado de BDD
+nlp = spacy.load('trained_models/bdd_model')
+
+# Verificar se o sentencizer está na pipeline e adicionar se não estiver
 if 'sentencizer' not in nlp.pipe_names:
     nlp.add_pipe('sentencizer')
 
@@ -11,6 +15,11 @@ if 'sentencizer' not in nlp.pipe_names:
 def process_bdd(bdd_scenario):
     # Processa o cenário BDD com o modelo treinado
     doc = nlp(bdd_scenario)
+
+    # Exibir todas as entidades detectadas pelo modelo
+    print("Entidades detectadas:")
+    for ent in doc.ents:
+        print(f"Texto: {ent.text}, Label: {ent.label_}, Tipo: {ent._.get('tipo')}")
 
     conditions = []
     action = ""
@@ -21,6 +30,7 @@ def process_bdd(bdd_scenario):
     outcomes = []
     model_names = []
 
+    # Verifica cada sentença no documento
     for sent in doc.sents:
         # Detecta o "Given", "When" e "Then" no texto BDD
         if "Given" in sent.text or "Dado" in sent.text:
@@ -31,11 +41,13 @@ def process_bdd(bdd_scenario):
             expected_result = sent.text.strip()
 
         # Extração das entidades diretamente do modelo treinado
-        for ent in sent.ents:
+        for ent in doc.ents:
             if ent.label_ == "PROPERTY":
+                # Acessar o tipo da propriedade através da extensão
+                tipo = ent._.get("tipo") or "String"  # Valor padrão "String" caso o tipo não esteja definido
                 properties.append({
-                    'name': ent.text.lower(),
-                    'type': ent.label_  # O modelo já fornece o tipo
+                    'name': ent.text,
+                    'type': tipo
                 })
             elif ent.label_ == "ACTOR":
                 actors.append(ent.text)
@@ -58,3 +70,12 @@ def process_bdd(bdd_scenario):
         "outcomes": outcomes,
         "model_names": model_names
     }
+
+# Exemplo de uso da função com um cenário BDD
+bdd_scenario = """
+       Dado que o produto tem um nome, preço e quantidade definidos. 
+       Quando o usuário entra na página pela primeira vez. 
+       Então a lista com os produtos deve ser exibida.
+    """
+resultado = process_bdd(bdd_scenario)
+print(resultado)

@@ -4,10 +4,13 @@ import shutil
 def remove_generated_files_and_pycache(directory):
     # Lista de diretórios que queremos limpar
     directories_to_clean = [
+        '__pycache__',
         'back_end/generated',
+        'back_end/__pycache__',
         'front_end/src/components',
         'front_end/src/services',
-        'front_end/src'
+        'front_end/src',
+        'trained_models/bdd_model'
     ]
     
     # Extensões de arquivos gerados automaticamente

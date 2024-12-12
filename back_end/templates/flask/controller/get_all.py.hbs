@@ -1,0 +1,3 @@
+@{{ entity_var }}_blueprint.route('/{{ entity_var }}', methods=['GET'])
+def get_{{ entity_var }}():
+    return jsonify({{ entity_var }}_service.get_all())

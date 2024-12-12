@@ -21,26 +21,28 @@ def generate_model(template_path, entity_name, properties):
     """
     return generate_code(template_path, entity_name=entity_name, properties=properties)
 
-def generate_controller(template_path, entity_name, entity_var, properties, bdd_data):
+def generate_controller(template_dir, entity_name, entity_var, action_name):
     """
-    Gera o código do Controller.
-    
-    :param template_path: Caminho do template do controller.
+    Gera o código do Controller a partir dos templates.
+
+    :param template_dir: Diretório dos templates do controller.
     :param entity_name: Nome da entidade.
     :param entity_var: Nome da entidade em formato de variável (minúsculo).
-    :param properties: Propriedades da entidade.
-    :param bdd_data: Dados extraídos do BDD.
+    :param action_name: Nome da ação.
     :return: Código gerado do controller.
     """
-    return generate_code(
-        template_path,
-        entity_name=entity_name,
-        entity_var=entity_var,
-        properties=properties,
-        bdd_conditions=bdd_data['conditions'],
-        bdd_action=bdd_data['action'],
-        bdd_expected_result=bdd_data['expected_result']
-    )
+    base_template_path = f"{template_dir['base']}"
+    controller_template_path = f"{template_dir[action_name]}"
+
+    controller_code = generate_code(controller_template_path,
+                                     entity_name=entity_name, entity_var=entity_var)
+
+    base_code = generate_code(base_template_path,
+                               entity_name=entity_name, 
+                               entity_var=entity_var,
+                               action_template=action_name)
+    
+    return base_code
 
 def generate_repository(template_path, entity_name, entity_var):
     """

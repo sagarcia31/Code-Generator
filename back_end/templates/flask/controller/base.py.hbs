@@ -1,0 +1,8 @@
+from flask import Blueprint, request, jsonify
+
+{{ entity_var }}_blueprint = Blueprint('{{ entity_var }}', __name__)
+
+{{ action_template }}
+
+# Serviço injetado aqui
+{{ entity_var }}_service = {{ entity_name }}Service({{ entity_name }}Repository(db))

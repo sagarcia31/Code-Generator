@@ -13,7 +13,6 @@ else:
 
 # Definir rótulos (labels) de entidades
 ner.add_label("MODEL_NAME")
-ner.add_label("PROPERTY")
 ner.add_label("ACTOR")
 ner.add_label("ACTION")
 ner.add_label("LOCATION")
@@ -26,43 +25,25 @@ spacy.tokens.Span.set_extension("tipo", default=None)
 # Função para adicionar spans ao doc com tipo
 def add_custom_span(doc, start, end, label, tipo=None):
     span = doc.char_span(start, end, label=label)
-    if span:
-        span._.tipo = tipo  # Definir o tipo como um atributo personalizado
+    if span is not None:
+        span._.set("tipo", tipo)
         doc.ents = list(doc.ents) + [span]
 
 # Função para verificar sobreposição de entidades
 def entidades_validas(annotations):
     valid_annotations = []
-    occupied_indices = set()
-    
     for start, end, label, tipo in annotations:
-        if not any(i in occupied_indices for i in range(start, end)):  # Verificar se há sobreposição
+        overlap = False
+        for v_start, v_end, v_label, v_tipo in valid_annotations:
+            if start < v_end and end > v_start:
+                overlap = True
+                break
+        if not overlap:
             valid_annotations.append((start, end, label, tipo))
-            occupied_indices.update(range(start, end))  # Marcar esses índices como ocupados
-    
     return valid_annotations
-
-# Função para inferir o tipo de dado da propriedade
-def infer_type(property_name):
-    string_properties = ["nome", "descrição", "endereço", "alcunha", "apelido", "titulo"]
-    integer_properties = ["quantidade", "idade", "id", "número"]
-    float_properties = ["preço", "valor", "salário", "custo"]
-    datetime_properties = ["data", "criado", "modificado"]
-
-    if any(prop in property_name for prop in string_properties):
-        return "String"
-    elif any(prop in property_name for prop in integer_properties):
-        return "Integer"
-    elif any(prop in property_name for prop in float_properties):
-        return "Float"
-    elif any(prop in property_name for prop in datetime_properties):
-        return "DateTime"
-    else:
-        return "String"  # Tipo padrão
 
 # Listas de elementos variáveis para cenários BDD
 modelos = ["produto", "categoria", "pedido", "fornecedor", "item"]
-propriedades = ["nome", "preço", "quantidade", "descrição", "valor", "data"]
 atores = ["usuário", "cliente", "administrador", "gerente"]
 acoes = ["entra", "acessa", "visualiza"]
 locais = ["pagina inicial", "carrinho", "catálogo", "dashboard"]
@@ -72,67 +53,44 @@ consequencias = ["deve ser exibida", "deve ser atualizada", "deve ser mostrada"]
 # Função para gerar um cenário BDD com tipos de propriedades inferidos
 def gerar_bdd_story_com_tipo():
     modelo = random.choice(modelos)
-    props = random.sample(propriedades, 3)
     ator = random.choice(atores)
     acao = random.choice(acoes)
     local = random.choice(locais)
     resultado = random.choice(resultados)
     consequencia = random.choice(consequencias)
-    
-    # Frases BDD
-    dado = f"Dado que o {modelo} tem um {props[0]}, {props[1]} e {props[2]} definidos"
+
+    dado = f"Dado que o {modelo} tem um nome, preço e quantidade definidos"
     quando = f"Quando o {ator} {acao} na {local} pela primeira vez"
     entao = f"Então a {resultado} com os {modelo}s {consequencia}"
-    
-    # Inferir os tipos das propriedades
-    tipo_prop_1 = infer_type(props[0])
-    tipo_prop_2 = infer_type(props[1])
-    tipo_prop_3 = infer_type(props[2])
-    
-    # Índices para as anotações
+
     start_model_name = dado.index(modelo)
     end_model_name = start_model_name + len(modelo)
-    
-    start_prop_1 = dado.index(props[0])
-    end_prop_1 = start_prop_1 + len(props[0])
-    
-    start_prop_2 = dado.index(props[1])
-    end_prop_2 = start_prop_2 + len(props[1])
-    
-    start_prop_3 = dado.index(props[2])
-    end_prop_3 = start_prop_3 + len(props[2])
-    
+
     start_actor = quando.index(ator)
     end_actor = start_actor + len(ator)
-    
+
     start_action = quando.index(acao)
     end_action = start_action + len(acao)
-    
+
     start_location = quando.index(local)
     end_location = start_location + len(local)
-    
+
     start_result = entao.index(resultado)
     end_result = start_result + len(resultado)
-    
+
     start_outcome = entao.index(consequencia)
     end_outcome = start_outcome + len(consequencia)
-    
-    # Anotações
+
     annotations = [
         (start_model_name, end_model_name, "MODEL_NAME", None),
-        (start_prop_1, end_prop_1, "PROPERTY", tipo_prop_1),
-        (start_prop_2, end_prop_2, "PROPERTY", tipo_prop_2),
-        (start_prop_3, end_prop_3, "PROPERTY", tipo_prop_3),
         (start_actor, end_actor, "ACTOR", None),
         (start_action, end_action, "ACTION", None),
         (start_location, end_location, "LOCATION", None),
         (start_result, end_result, "RESULT", None),
         (start_outcome, end_outcome, "OUTCOME", None)
     ]
-    
-    # Remover sobreposições de entidades
+
     annotations = entidades_validas(annotations)
-    
     return (dado, quando, entao, annotations)
 
 # Gerar 100 variações de cenários BDD

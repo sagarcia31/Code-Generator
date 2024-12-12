@@ -24,7 +24,6 @@ def process_bdd(bdd_scenario):
     conditions = []
     action = ""
     expected_result = ""
-    properties = []
     actors = []
     locations = []
     outcomes = []
@@ -42,14 +41,7 @@ def process_bdd(bdd_scenario):
 
         # Extração das entidades diretamente do modelo treinado
         for ent in doc.ents:
-            if ent.label_ == "PROPERTY":
-                # Acessar o tipo da propriedade através da extensão
-                tipo = ent._.get("tipo") or "String"  # Valor padrão "String" caso o tipo não esteja definido
-                properties.append({
-                    'name': ent.text,
-                    'type': tipo
-                })
-            elif ent.label_ == "ACTOR":
+            if ent.label_ == "ACTOR":
                 actors.append(ent.text)
             elif ent.label_ == "ACTION":
                 action = ent.text
@@ -64,7 +56,6 @@ def process_bdd(bdd_scenario):
         "conditions": conditions,
         "action": action,
         "expected_result": expected_result,
-        "properties": properties,
         "actors": actors,
         "locations": locations,
         "outcomes": outcomes,

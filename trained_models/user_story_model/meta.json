@@ -18,9 +18,11 @@
   },
   "labels":{
     "ner":[
-      "ACTION_NAME",
+      "ACTION",
+      "ENTITY",
+      "GOAL",
       "METHOD",
-      "MODEL_NAME"
+      "SUBJECT"
     ]
   },
   "pipeline":[

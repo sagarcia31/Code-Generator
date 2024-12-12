@@ -1,43 +1,52 @@
 import spacy
 
 # Carregar o modelo do spaCy
-nlp = spacy.load('pt_core_news_sm')
+nlp = spacy.load('trained_models/user_story_model')
 
 def process_user_story(user_story):
     doc = nlp(user_story)
 
     # Inicializar variáveis
-    model_name = ""
-    action_name = ""
+    subject = ""
+    action = ""
+    entity = ""
+    goal = ""
     method = ""
 
     # Detectar entidades e ações
     for ent in doc.ents:
-        if ent.label_ == "ORG":  # Supondo que o modelo seja identificado como uma organização
-            model_name = ent.text.capitalize()
-        elif ent.label_ == "MISC":  # Supondo que ações sejam rotuladas como MISC
-            action_name = ent.text.lower().replace(" ", "_")
+        if ent.label_ == "SUBJECT":
+            subject = ent.text
+        elif ent.label_ == "ACTION":
+            action = ent.text.lower().replace(" ", "_")
+        elif ent.label_ == "ENTITY":
+            entity = ent.text
+        elif ent.label_ == "GOAL":
+            goal = ent.text
 
-    # Lógica simples para determinar o método de CRUD
-    if "adicionar" in user_story.lower() or "criar" in user_story.lower():
+        # Lógica para determinar o método de CRUD com base na ação
+    if "adicionar" in action or "criar" in action or "inserir" in action:
         method = "create"
-    elif "atualizar" in user_story.lower() or "editar" in user_story.lower():
+    elif "atualizar" in action or "editar" in action or "modificar" in action:
         method = "update"
-    elif "remover" in user_story.lower() or "deletar" in user_story.lower():
+    elif "remover" in action or "deletar" in action or "excluir" in action:
         method = "delete"
-    elif "listar" in user_story.lower() or "visualizar" in user_story.lower():
-        method = "list"
+    elif "listar" in action or "visualizar" in action or "consultar" in action:
+        method = "get_all"
 
     # Se a entidade do modelo não foi identificada corretamente, defina um padrão
-    if not model_name:
-        model_name = "Produto"  # Modelo padrão
-
-    if not action_name:
-        action_name = f"{method}_{model_name.lower()}"  # Nome da ação padrão
+    if not entity:
+        entity = "Produto"  # Entidade padrão
 
     return {
-        "model_name": model_name,
-        "action_name": action_name,
-        "method": method,
-        "model_instance": model_name.lower()
+        "subject": subject,
+        "action": action,
+        "entity": entity,
+        "goal": goal,
+        "method": method
     }
+
+# Exemplo de uso da função com uma user story
+user_story = "Como um usuário, eu quero adicionar um produto ao carrinho, para efetuar uma compra"
+resultado = process_user_story(user_story)
+print(resultado)

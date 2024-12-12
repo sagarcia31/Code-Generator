@@ -1,0 +1,4 @@
+@{{ entity_var }}_blueprint.route('/{{ entity_var }}', methods=['POST'])
+def create_{{ entity_var }}():
+    data = request.json
+    return jsonify({{ entity_var }}_service.create(data))

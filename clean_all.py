@@ -10,7 +10,7 @@ def remove_generated_files_and_pycache(directory):
         'front_end/src/components',
         'front_end/src/services',
         'front_end/src',
-        'trained_models/bdd_model'
+        'trained_models'  # Atualizado para remover toda a pasta trained_models
     ]
     
     # Extensões de arquivos gerados automaticamente

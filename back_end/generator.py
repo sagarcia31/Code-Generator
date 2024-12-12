@@ -42,7 +42,7 @@ def generate_controller(template_dir, entity_name, entity_var, action_name):
                                entity_var=entity_var,
                                action_template=action_name)
     
-    return base_code
+    return controller_code
 
 def generate_repository(template_path, entity_name, entity_var):
     """

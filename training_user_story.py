@@ -16,35 +16,67 @@ ner.add_label("SUBJECT")
 ner.add_label("ACTION")
 ner.add_label("ENTITY")
 ner.add_label("GOAL")
-ner.add_label("METHOD")
 
-# Dados de treino
-TRAIN_DATA = [
-    ("Como um usuário, eu quero adicionar um produto ao carrinho, para efetuar uma compra", {
-        "entities": [(8, 14, "SUBJECT"), (20, 28, "ACTION"), (33, 40, "ENTITY"), (50, 67, "GOAL")]
-    }),
-    ("Como um administrador, eu quero atualizar as informações do pedido, para manter o sistema atualizado", {
-        "entities": [(8, 21, "SUBJECT"), (25, 34, "ACTION"), (39, 50, "ENTITY"), (56, 78, "GOAL")]
-    }),
-    ("Como um administrador, eu quero remover um produto do estoque, para manter o estoque atualizado.", {
-        "entities": [(8, 21, "SUBJECT"), (25, 31, "ACTION"), (33, 40, "ENTITY"), (46, 73, "GOAL")]
-    }),
-    ("Como um usuário, eu quero visualizar os pedidos feitos, para monitoramento posterior.", {
-        "entities": [(8, 15, "SUBJECT"), (26, 36, "ACTION"), (40, 47, "ENTITY"), (61, 84, "GOAL")]
-    })
-]
+# Componentes para gerar user stories
+subjects = ["usuário", "administrador", "cliente", "gerente", "visitante", "membro", "funcionário", "analista", "supervisor", "desenvolvedor"]
+actions = ["adicionar", "criar", "inserir", "atualizar", "editar", "modificar",
+           "remover", "deletar", "excluir", "listar", "visualizar", "consultar", "gerar", "administrar", "automatizar"]
+entities = ["produto", "pedido", "item", "estoque", "informações do pedido",
+            "detalhes do produto", "usuário", "perfil", "relatório", "categoria",
+            "registro", "dados", "documento", "fatura", "transação"]
+goals = ["efetuar uma compra", "manter o sistema atualizado", "monitorar o estoque",
+         "decidir a compra", "gerar relatórios", "melhorar a experiência do usuário",
+         "facilitar a gestão de dados", "aumentar as vendas", "otimizar processos",
+         "garantir a segurança dos dados", "automatizar tarefas", "reduzir custos",
+         "melhorar a eficiência", "aumentar a produtividade", "satisfazer o cliente"]
+
+def gerar_train_data(num_examples=1000):
+    train_data = []
+    for _ in range(num_examples):
+        subject = random.choice(subjects)
+        action = random.choice(actions)
+        entity = random.choice(entities)
+        goal = random.choice(goals)
+
+        user_story = f"Como um {subject}, eu quero {action} um {entity}, para {goal}."
+
+        # Identificar os índices das entidades no texto
+        start_subject = user_story.find(subject)
+        end_subject = start_subject + len(subject)
+
+        start_action = user_story.find(action)
+        end_action = start_action + len(action)
+
+        start_entity = user_story.find(entity, end_action)
+        end_entity = start_entity + len(entity)
+
+        start_goal = user_story.find(goal, end_entity)
+        end_goal = start_goal + len(goal)
+
+        entities_anotadas = [
+            (start_subject, end_subject, "SUBJECT"),
+            (start_action, end_action, "ACTION"),
+            (start_entity, end_entity, "ENTITY"),
+            (start_goal, end_goal, "GOAL")
+        ]
+
+        train_data.append((user_story, {"entities": entities_anotadas}))
+    return train_data
+
+# Gerar 1000 exemplos
+TRAIN_DATA = gerar_train_data(1000)
 
 # Preparar o treinamento
 optimizer = nlp.begin_training()
 
 # Treinamento
-for i in range(300):  # Treinar por 30 iterações
+for i in range(300):  # Ajuste o número de iterações conforme necessário
     random.shuffle(TRAIN_DATA)
     losses = {}
-    for text, annotations in TRAIN_DATA:
-        doc = nlp.make_doc(text)
-        example = Example.from_dict(doc, annotations)
-        nlp.update([example], drop=0.5, losses=losses)
+    for texto, anotacoes in TRAIN_DATA:
+        doc = nlp.make_doc(texto)
+        exemplo = Example.from_dict(doc, anotacoes)
+        nlp.update([exemplo], drop=0.5, losses=losses)
     print(f"Iteração {i + 1}, perdas: {losses}")
 
 # Salvar o modelo treinado

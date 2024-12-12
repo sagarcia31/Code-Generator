@@ -67,7 +67,7 @@ def orchestrate_generation(user_story, bdd_scenario, tech_stack, figma_file_key=
     print(f"Código gerado com sucesso para a entidade {entity_name}!")
 
 if __name__ == "__main__":
-    user_story = "Como um usuário, eu quero visualizar uma lista de produtos para que eu possa escolher um produto"
+    user_story = "Como um usuário, eu quero adicionar produto no estoque para que eu possa publica-lo."
     bdd_scenario = """
        Dado que o produto tem um nome, preço e quantidade definidos. 
        Quando o usuário entra na página pela primeira vez. 
